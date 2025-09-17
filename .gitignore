@@ -1,0 +1,57 @@
+### HELP ###
+HELP.md
+
+### Maven ###
+target/
+.mvn/wrapper/maven-wrapper.jar
+dependency-reduced-pom.xml
+buildNumber.properties
+release.properties
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+
+### Spring Boot (segurança) ###
+*.log
+.env
+application.properties
+application.yml
+
+!src/main/resources/application.example.properties
+!src/main/resources/application.example.yml
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### OS/system files ###
+.DS_Store
+Thumbs.db
+
+### Build (caso esteja com Gradle por engano) ###
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
