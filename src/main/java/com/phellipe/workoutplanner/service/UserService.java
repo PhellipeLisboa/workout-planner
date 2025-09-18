@@ -1,5 +1,7 @@
 package com.phellipe.workoutplanner.service;
 
+import com.phellipe.workoutplanner.dto.UserRequestDto;
+import com.phellipe.workoutplanner.dto.UserResponseDto;
 import com.phellipe.workoutplanner.entity.User;
 import com.phellipe.workoutplanner.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +16,22 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public User save(User user) {
-        return userRepository.save(user);
+    public UserResponseDto save(UserRequestDto dto) {
+
+        User user = User.builder()
+                .name(dto.name())
+                .email(dto.email())
+                .password(dto.password())
+                .build();
+
+        User savedUser = userRepository.save(user);
+
+        return new UserResponseDto(
+                savedUser.getId(),
+                savedUser.getName(),
+                savedUser.getEmail()
+        );
+
     }
 
     public User findById(Long id) {
