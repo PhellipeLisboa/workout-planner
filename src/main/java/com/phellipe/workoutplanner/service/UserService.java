@@ -2,6 +2,7 @@ package com.phellipe.workoutplanner.service;
 
 import com.phellipe.workoutplanner.dto.UserRequestDto;
 import com.phellipe.workoutplanner.dto.UserResponseDto;
+import com.phellipe.workoutplanner.dto.UserUpdateDto;
 import com.phellipe.workoutplanner.entity.User;
 import com.phellipe.workoutplanner.mapper.UserMapper;
 import com.phellipe.workoutplanner.repository.UserRepository;
@@ -27,24 +28,32 @@ public class UserService {
 
     }
 
-    public User findById(Long id) {
-        return userRepository.findById(id).orElseThrow(
+    public UserResponseDto findById(Long id) {
+        User user = userRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Usuário não encontrado.")
         );
+
+        return UserMapper.toDto(user);
     }
 
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<UserResponseDto> findAll()
+    {
+        return userRepository.findAll()
+                .stream()
+                .map(UserMapper::toDto)
+                .toList();
     }
 
-    public void update(Long id, User user) {
+    public UserResponseDto update(Long id, UserUpdateDto dto) {
 
-        User userEntity = findById(id);
+        User userEntity = findEntityById(id);
 
-        if (user.getName() != null) userEntity.setName(user.getName());
-        if (user.getEmail() != null) userEntity.setEmail(user.getEmail());
+        if (dto.name() != null) userEntity.setName(dto.name());
+        if (dto.email() != null) userEntity.setEmail(dto.email());
+        if (dto.password() != null) userEntity.setPassword(dto.password());
 
-        userRepository.save(userEntity);
+        User updatedUser = userRepository.save(userEntity);
+        return UserMapper.toDto(updatedUser);
     }
 
     public void deleteById(Long id) {
@@ -53,6 +62,11 @@ public class UserService {
             throw new RuntimeException("Usuário não encontrado.");
         }
         userRepository.deleteById(id);
+    }
+
+    private User findEntityById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     }
 
 }

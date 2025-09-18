@@ -2,7 +2,9 @@ package com.phellipe.workoutplanner.controller;
 
 import com.phellipe.workoutplanner.dto.UserRequestDto;
 import com.phellipe.workoutplanner.dto.UserResponseDto;
+import com.phellipe.workoutplanner.dto.UserUpdateDto;
 import com.phellipe.workoutplanner.entity.User;
+import com.phellipe.workoutplanner.mapper.UserMapper;
 import com.phellipe.workoutplanner.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,19 +29,20 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> findAll() {
+    public ResponseEntity<List<UserResponseDto>> findAll()
+    {
         return ResponseEntity.ok(userService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> findById(@PathVariable Long id) {
+    public ResponseEntity<UserResponseDto> findById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody User user) {
-        userService.update(id, user);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<UserResponseDto> update(@PathVariable Long id, @RequestBody UserUpdateDto dto) {
+        UserResponseDto updatedUser = userService.update(id, dto);
+        return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/{id}")
