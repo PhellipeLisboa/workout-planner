@@ -3,6 +3,7 @@ package com.phellipe.workoutplanner.service;
 import com.phellipe.workoutplanner.dto.UserRequestDto;
 import com.phellipe.workoutplanner.dto.UserResponseDto;
 import com.phellipe.workoutplanner.entity.User;
+import com.phellipe.workoutplanner.mapper.UserMapper;
 import com.phellipe.workoutplanner.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,19 +19,11 @@ public class UserService {
 
     public UserResponseDto save(UserRequestDto dto) {
 
-        User user = User.builder()
-                .name(dto.name())
-                .email(dto.email())
-                .password(dto.password())
-                .build();
+        User user = UserMapper.toEntity(dto);
 
         User savedUser = userRepository.save(user);
 
-        return new UserResponseDto(
-                savedUser.getId(),
-                savedUser.getName(),
-                savedUser.getEmail()
-        );
+        return UserMapper.toDto(savedUser);
 
     }
 
