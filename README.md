@@ -2,11 +2,13 @@
 
 Workout Planner é uma API para gerenciar usuários, treinos e exercícios. O projeto está em desenvolvimento e será expandido futuramente com funcionalidades como controle de permissões e autenticação.
 
+### Funcionalidades já implementadas
+
+- CRUD de usuários e exercícios com DTOs, validação, mappers e endpoints REST
+
+- Filtros de exercícios por nome, grupo muscular e equipamento
+
 ### Funcionalidades essenciais a serem desenvolvidas
-
-- CRUD de usuários
-
-- CRUD de exercícios
 
 - CRUD de treinos a partir dos exercícios cadastrados
 
@@ -14,6 +16,7 @@ Workout Planner é uma API para gerenciar usuários, treinos e exercícios. O pr
 
 - Roles e permissões
 - Autenticação
+- Exceções personalizadas
 - Testes unitários
 - Docker
 
