@@ -1,7 +1,10 @@
 package com.phellipe.workoutplanner.entity;
 
+import com.phellipe.workoutplanner.WorkoutplannerApplication;
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 @Getter
@@ -24,5 +27,9 @@ public class User {
 
     @Column(name = "senha", nullable = false)
     private String password;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Workout> workouts = new ArrayList<Workout>();
 
 }
