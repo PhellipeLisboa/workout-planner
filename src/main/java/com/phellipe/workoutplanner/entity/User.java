@@ -30,6 +30,6 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<Workout> workouts = new ArrayList<Workout>();
+    private List<Workout> workouts = new ArrayList<>();
 
 }
