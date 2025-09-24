@@ -5,7 +5,7 @@ import com.phellipe.workoutplanner.entity.Workout;
 
 public class WorkoutMapper {
 
-    public WorkoutResponseDto toDto(Workout workout) {
+    public static WorkoutResponseDto toDto(Workout workout) {
 
         return new WorkoutResponseDto(
                 workout.getId(),
