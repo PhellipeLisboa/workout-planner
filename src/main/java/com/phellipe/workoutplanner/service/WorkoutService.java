@@ -26,9 +26,9 @@ public class WorkoutService {
     private final UserRepository userRepository;
     private final ExerciseRepository exerciseRepository;
 
-    public WorkoutResponseDto save(WorkoutRequestDto dto) {
+    public WorkoutResponseDto save(Long userId, WorkoutRequestDto dto) {
 
-        User userEntity = userRepository.findById(dto.userId()).orElseThrow(
+        User userEntity = userRepository.findById(userId).orElseThrow(
                 () -> new RuntimeException("Usuário não encontrado.")
         );
 

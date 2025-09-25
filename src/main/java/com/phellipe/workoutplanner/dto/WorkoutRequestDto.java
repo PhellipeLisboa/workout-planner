@@ -13,8 +13,6 @@ public record WorkoutRequestDto(
         String name,
         @Size(max = 500)
         String description,
-        @NotNull(message = "O id do usuário é obrigatório")
-        Long userId,
         @NotEmpty(message = "É necessário informar pelo menos um exercício")
         List<Long> exercisesId
 ) {}
