@@ -1,11 +1,10 @@
 package com.phellipe.workoutplanner.controller;
 
-import com.phellipe.workoutplanner.dto.UserRequestDto;
-import com.phellipe.workoutplanner.dto.UserResponseDto;
-import com.phellipe.workoutplanner.dto.UserUpdateDto;
+import com.phellipe.workoutplanner.dto.*;
 import com.phellipe.workoutplanner.entity.User;
 import com.phellipe.workoutplanner.mapper.UserMapper;
 import com.phellipe.workoutplanner.service.UserService;
+import com.phellipe.workoutplanner.service.WorkoutService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +19,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final WorkoutService workoutService;
 
     @PostMapping
     public ResponseEntity<UserResponseDto> save(@RequestBody @Valid UserRequestDto dto) {
@@ -51,5 +51,18 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/{userId}/workouts")
+    public ResponseEntity<WorkoutResponseDto> createWorkout(@PathVariable Long userId, @RequestBody @Valid WorkoutRequestDto dto) {
+
+        WorkoutResponseDto savedWorkout = workoutService.save(userId, dto);
+        URI location = URI.create("/workouts/" + savedWorkout.id());
+        return ResponseEntity.created(location).body(savedWorkout);
+
+    }
+
+    @GetMapping("/{userId}/workouts")
+    public ResponseEntity<List<WorkoutResponseDto>> findUserWorkouts(@PathVariable Long userId) {
+        return ResponseEntity.ok(workoutService.findByUser(userId));
+    }
 
 }
