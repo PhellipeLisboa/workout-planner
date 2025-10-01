@@ -1,4 +1,4 @@
-package com.phellipe.workoutplanner.service.handler;
+package com.phellipe.workoutplanner.exception.handler;
 
 import java.time.LocalDateTime;
 

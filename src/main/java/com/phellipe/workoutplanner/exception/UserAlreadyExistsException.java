@@ -2,9 +2,9 @@ package com.phellipe.workoutplanner.exception;
 
 public class UserAlreadyExistsException extends RuntimeException{
 
-    public UserAlreadyExistsException() {
+    public UserAlreadyExistsException(String email) {
 
-        super("O email já está sendo utilizado.");
+        super("O email " + email + " já está sendo utilizado.");
 
     }
 
