@@ -6,6 +6,10 @@ import com.phellipe.workoutplanner.dto.WorkoutUpdateDto;
 import com.phellipe.workoutplanner.entity.Exercise;
 import com.phellipe.workoutplanner.entity.User;
 import com.phellipe.workoutplanner.entity.Workout;
+import com.phellipe.workoutplanner.exception.ExerciseNotFoundException;
+import com.phellipe.workoutplanner.exception.NoWorkoutsFoundException;
+import com.phellipe.workoutplanner.exception.UserNotFoundException;
+import com.phellipe.workoutplanner.exception.WorkoutNotFoundException;
 import com.phellipe.workoutplanner.mapper.UserMapper;
 import com.phellipe.workoutplanner.mapper.WorkoutMapper;
 import com.phellipe.workoutplanner.repository.ExerciseRepository;
@@ -29,7 +33,7 @@ public class WorkoutService {
     public WorkoutResponseDto save(Long userId, WorkoutRequestDto dto) {
 
         User userEntity = userRepository.findById(userId).orElseThrow(
-                () -> new RuntimeException("Usuário não encontrado.")
+                () -> new UserNotFoundException(userId)
         );
 
         List<Exercise> exercises = dto.exercisesId()
@@ -63,6 +67,10 @@ public class WorkoutService {
 
         List<Workout> userWorkouts = user.getWorkouts();
 
+        if (userWorkouts == null || userWorkouts.isEmpty()) {
+            throw new NoWorkoutsFoundException(userId);
+        }
+
         return userWorkouts
                 .stream()
                 .map(WorkoutMapper::toDto)
@@ -72,8 +80,13 @@ public class WorkoutService {
 
     public List<WorkoutResponseDto> findAll() {
 
-        return workoutRepository.findAll()
-                .stream()
+        List<Workout> workouts = workoutRepository.findAll();
+
+        if (workouts.isEmpty()) {
+            throw new NoWorkoutsFoundException();
+        }
+
+        return workouts.stream()
                 .map(WorkoutMapper::toDto)
                 .toList();
 
@@ -102,7 +115,7 @@ public class WorkoutService {
     public void delete(Long id) {
 
         if (!workoutRepository.existsById(id)) {
-            throw new RuntimeException("Treino não encontrado.");
+            throw new WorkoutNotFoundException(id);
         }
 
         workoutRepository.deleteById(id);
@@ -111,19 +124,19 @@ public class WorkoutService {
 
     private User findUserById(Long id) {
         return userRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Usuário não encontrado")
+                () -> new UserNotFoundException(id)
         );
     }
 
     private Exercise findExerciseById(Long id) {
         return exerciseRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Exercício não encontrado")
+                () -> new ExerciseNotFoundException(id)
         );
     }
 
     private Workout findWorkoutById(Long id) {
         return workoutRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Treino não encontrado.")
+                () -> new WorkoutNotFoundException(id)
         );
     }
 
