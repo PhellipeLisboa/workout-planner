@@ -17,4 +17,6 @@ public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
 
     List<Exercise> findByMuscleGroupsContainingAndEquipment(MuscleGroup muscleGroup, Equipment equipment);
 
+    boolean existsByNameIgnoreCaseAndEquipment(String name, Equipment equipment);
+
 }

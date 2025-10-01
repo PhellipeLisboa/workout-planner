@@ -6,6 +6,9 @@ import com.phellipe.workoutplanner.dto.ExerciseUpdateDto;
 import com.phellipe.workoutplanner.entity.Equipment;
 import com.phellipe.workoutplanner.entity.Exercise;
 import com.phellipe.workoutplanner.entity.MuscleGroup;
+import com.phellipe.workoutplanner.exception.ExerciseAlreadyExistsException;
+import com.phellipe.workoutplanner.exception.ExerciseNotFoundException;
+import com.phellipe.workoutplanner.exception.NoExercisesFoundException;
 import com.phellipe.workoutplanner.mapper.ExerciseMapper;
 import com.phellipe.workoutplanner.repository.ExerciseRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,10 @@ public class ExerciseService {
 
     public ExerciseResponseDto save(ExerciseRequestDto dto) {
 
+        if (exerciseRepository.existsByNameIgnoreCaseAndEquipment(dto.name(), dto.equipment())) {
+            throw new ExerciseAlreadyExistsException(dto.name(), dto.equipment());
+        }
+
         Exercise exercise = ExerciseMapper.toEntity(dto);
 
         Exercise savedExercise = exerciseRepository.save(exercise);
@@ -31,7 +38,7 @@ public class ExerciseService {
 
     public ExerciseResponseDto findById(Long id) {
         Exercise exercise = exerciseRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Exercício não encontrado.")
+                () -> new ExerciseNotFoundException(id)
         );
 
         return ExerciseMapper.toDto(exercise);
@@ -50,7 +57,7 @@ public class ExerciseService {
 
         List<Exercise> exercisesByMuscleGroup = exerciseRepository.findByMuscleGroupsContaining(muscleGroup);
 
-        if (exercisesByMuscleGroup.isEmpty()) throw new RuntimeException("Não existe nenhum exercício para o grupo muscular " + muscleGroup);
+        if (exercisesByMuscleGroup.isEmpty()) throw new NoExercisesFoundException(muscleGroup);
 
         return exercisesByMuscleGroup.stream()
                 .map(ExerciseMapper::toDto)
@@ -62,7 +69,7 @@ public class ExerciseService {
 
         List<Exercise> exercisesByNameContains = exerciseRepository.findByNameContainingIgnoreCase(keyword);
 
-        if (exercisesByNameContains.isEmpty()) throw new RuntimeException("Não existe nenhum exercício encontrado para a pesquisa: " + keyword);
+        if (exercisesByNameContains.isEmpty()) throw new NoExercisesFoundException(keyword);
 
         return exercisesByNameContains.stream()
                 .map(ExerciseMapper::toDto)
@@ -74,8 +81,7 @@ public class ExerciseService {
 
         List<Exercise> exercisesByMuscleGroupAndEquipment = exerciseRepository.findByMuscleGroupsContainingAndEquipment(muscleGroup, equipment);
 
-        if (exercisesByMuscleGroupAndEquipment.isEmpty()) throw new RuntimeException("Nenhum exercício encontrado para "
-                + muscleGroup + " utilizando " + equipment);
+        if (exercisesByMuscleGroupAndEquipment.isEmpty()) throw new NoExercisesFoundException(muscleGroup, equipment);
 
         return exercisesByMuscleGroupAndEquipment.stream()
                 .map(ExerciseMapper::toDto)
@@ -92,6 +98,11 @@ public class ExerciseService {
         if (dto.muscleGroups() != null && !dto.muscleGroups().isEmpty()) exerciseEntity.setMuscleGroups(dto.muscleGroups());
         if (dto.equipment() != null) exerciseEntity.setEquipment(dto.equipment());
 
+        if (exerciseRepository.existsByNameIgnoreCaseAndEquipment(exerciseEntity.getName(), exerciseEntity.getEquipment())
+                && !exerciseEntity.getId().equals(id)) {
+            throw new ExerciseAlreadyExistsException(exerciseEntity.getName(), exerciseEntity.getEquipment());
+        }
+
         Exercise savedExercise = exerciseRepository.save(exerciseEntity);
 
         return ExerciseMapper.toDto(savedExercise);
@@ -101,7 +112,7 @@ public class ExerciseService {
     public void deleteById(Long id) {
 
         if (!exerciseRepository.existsById(id)) {
-            throw new RuntimeException("Exercício não encontrado.");
+            throw new ExerciseNotFoundException(id);
         }
         exerciseRepository.deleteById(id);
 
@@ -110,7 +121,7 @@ public class ExerciseService {
 
     private Exercise findEntityById(Long id) {
         return exerciseRepository.findById(id).orElseThrow(
-                () -> new RuntimeException("Exercício não encontrado.")
+                () -> new ExerciseNotFoundException(id)
         );
     }
 

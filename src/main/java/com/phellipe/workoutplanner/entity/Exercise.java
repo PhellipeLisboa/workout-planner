@@ -11,7 +11,10 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "exercicios")
+@Table(name = "exercicios",
+        uniqueConstraints = {
+            @UniqueConstraint(columnNames = {"name", "equipment"})
+        })
 public class Exercise {
 
     @Id
